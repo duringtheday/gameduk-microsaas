@@ -1,5 +1,6 @@
 html,
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   text-decoration: none;
@@ -12,15 +13,24 @@ ol {
   list-style: none;
 }
 
+
+body {
+  overflow: none;
+}
+
 /* ─── Contenedor general ──────────────────────────────────────────────────── */
 .certificate-form-container {
+  min-height: 100vh;
   display: flex;
+  justify-content: center;     
+  align-items: center;         
   gap: 2rem;
   /* padding: 2rem; */
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to right, #1E0D6E 0%, #3B0F91 45%, #5D14A8 100%), linear-gradient(to right, #f93dff 0%, #b032c2 100%);
+  background-size: cover;
 }
 
 /* ─── Sección de formulario ───────────────────────────────────────────────── */
@@ -68,6 +78,7 @@ ol {
 .preview-section {
   flex: 2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -409,6 +420,7 @@ h1.cert-header.editable-text.move-down {
     visibility: visible !important;
   }
 
+
   aside.form-section {
     display: none !important;
   }
@@ -452,7 +464,8 @@ h1.cert-header.editable-text.move-down {
     object-fit: contain !important;
     margin: 0rem 0;
   }
- .certificate-header-block.cert-logo .editable-logo {
+
+  .certificate-header-block.cert-logo .editable-logo {
     width: 8vw !important;
     height: auto !important;
     margin-top: -1rem !important;
@@ -969,7 +982,7 @@ h1.cert-header.editable-text.move-down {
 
 
 
-/* Bloque superior: logo + título */
+/* Bloque superior: logo  título */
 /* .certificate-header-block {
   position: absolute;
   display: flex;
@@ -986,7 +999,7 @@ h1.cert-header.editable-text.move-down {
   margin-top: 0.5rem;
 }
 
-.certificate-header-block .cert-logo.empty+.cert-header {
+.certificate-header-block .cert-logo.empty.cert-header {
   margin-top: 1rem;
   /* cuando no hay logo */
 }
@@ -1009,7 +1022,7 @@ h1.cert-header.editable-text.move-down {
 
 
 
-/* ── BLOQUE SUPERIOR: logo + título ── */
+/* ── BLOQUE SUPERIOR: logo  título ── */
 .certificate-header-block {
   display: flex;
   flex-direction: column;
@@ -1098,3 +1111,146 @@ h1.cert-header.editable-text.move-down {
 /* .cert-details .signature-item {
   order: 2 !important;
 } */
+
+
+
+
+
+
+
+/* ─── Slider de formulario ───────────────────────────────────────────────── */
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.form-slider {
+  position: relative;
+  margin-top: 2rem;
+  overflow: hidden;
+}
+
+.form-slider .slides {
+  display: flex;
+  width: calc(100% * 6);
+  min-height: 15vh;
+  /* 6 pasos → 600% */
+  transition: transform .3s ease-in-out;
+}
+
+.form-slider .slide {
+  flex: 0 0 16.6667%;      /* cada slide = 1/6 = 16.66% del ancho */
+  display: flex;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px dashed magenta;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  /* quitamos cualquier left/right por defecto aquí */
+  transform: translateY(-50%) scale(1);
+  transform-origin: center;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+  /* tamaño base (hit-area) opcional, si lo necesitas */
+  width: 20px;
+  height: 40px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+/* posición fija de cada flecha */
+.slider-arrow.left {
+  left: .5rem;
+}
+
+.slider-arrow.right {
+  right: .5rem;
+}
+
+.slider-arrow:hover {
+  /* sólo escalamos y mantenemos el mismo translateY */
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 3px 1px #0f011c;
+}
+
+.form-section.form-slider {
+  border-radius: 20px;
+}
+
+/* Gradientes difuminados en los bordes */
+.form-slider::before,
+.form-slider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 2rem;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.form-slider::before {
+  left: 0;
+  background: linear-gradient(to right, rgb(205, 170, 212), transparent);
+}
+
+.form-slider::after {
+  right: 0;
+  background: linear-gradient(to left, rgb(205, 170, 212), transparent);
+}
+
+
+/* DIBUJAR FIRMA */
+.signature-canvas {
+  border: 1px dashed #333;
+  background: #f9f9f9;
+  touch-action: none; 
+  cursor: crosshair;
+}
+.signature-tools {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+.signature-tools label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+/* ACRODEÓN FIRMA */
+.accordion {
+  width: 100%;
+}
+.accordion-item {
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.accordion-header {
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-weight: 600;
+}
+.accordion-content {
+  padding: 0.5rem 0;
+}
+/* Herramientas de boceto */
+.signature-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.signature-tools label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
