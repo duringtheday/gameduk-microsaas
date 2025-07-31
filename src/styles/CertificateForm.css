@@ -1137,7 +1137,6 @@ h1.cert-header.editable-text.move-down {
   display: flex;
   width: calc(100% * 6);
   min-height: 15vh;
-  /* 6 pasos → 600% */
   transition: transform .3s ease-in-out;
 }
 
@@ -1253,4 +1252,140 @@ h1.cert-header.editable-text.move-down {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+}
+
+
+
+
+
+
+/* ─── BARRA DESLIZANTE DE CONTROLES DE COLOR ─────────────────────────────── */
+.form-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.4) transparent;
+  margin-bottom: 1rem;
+}
+
+/* Chrome, Edge */
+.form-controls::-webkit-scrollbar {
+  height: 6px;
+}
+.form-controls::-webkit-scrollbar-track {
+  background: transparent;
+}
+.form-controls::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.4);
+  border-radius: 3px;
+}
+
+/* Cada control ocupa su espacio mínimo */
+.form-controls .form-group {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Inputs y selects reducidos para ahorrar espacio */
+.form-controls input[type="color"],
+.form-controls select {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Etiquetas más pequeñas */
+.form-controls label {
+  font-size: 0.85rem;
+  color: #fefaff;
+}
+
+/* Botón “＋” para añadir más colores al degradado */
+.form-controls .add-color {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: rgba(255,255,255,0.2);
+  border: 1px dashed rgba(255,255,255,0.4);
+  border-radius: 50%;
+  color: #fefaff;
+  cursor: pointer;
+  flex: none;
+  transition: background 0.2s;
+}
+.form-controls .add-color:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+
+
+
+
+
+/* CONTENEDOR DEL CANVAS */
+.canvas-wrapper {
+  overflow: hidden;
+  max-height: 100px;         /* altura compacta */
+  transition: max-height 0.3s ease;
+}
+.canvas-wrapper.expanded {
+  max-height: 300px;         /* altura expandida */
+}
+
+/* cuando está expandido, el propio canvas puede estirarse */
+.canvas-wrapper.expanded .signature-canvas {
+  width: 100%;
+  height: 200px;
+}
+
+
+
+
+/* OVERLAY DEL MODAL */
+.signature-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100vw;
+  height:100vh;
+  background: rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+
+/* ventana del modal */
+.signature-modal {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* canvas ampliado */
+.signature-modal .signature-canvas {
+  border: 1px solid #333;
+  margin-bottom: 1rem;
+}
+
+/* herramientas dentro del modal */
+.signature-modal .signature-tools {
+  display: flex;
+  gap: 1rem;
 }

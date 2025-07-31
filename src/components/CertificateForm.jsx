@@ -117,8 +117,8 @@ export default function CertificateForm() {
   const [brushSize, setBrushSize] = useState(2);
   const [showSignatureTools, setShowSignatureTools] = useState(false);
   // Qué tipo de firma está activa: 'image' | 'text' | 'draw'
-  const [signatureMethod, setSignatureMethod] = useState('draw');
-
+  const [signatureMethod, setSignatureMethod] = useState('');
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
 
 
   useEffect(() => {
@@ -764,6 +764,9 @@ export default function CertificateForm() {
                   )}
                 </div>
 
+
+                {/* --- BLOQUE DRAW --- */}
+                {/* ▶️ Paso Boceto de firma */}
                 <div className={`accordion-item ${signatureMethod === 'draw' ? 'active' : ''}`}>
                   <div
                     className="accordion-header"
@@ -774,45 +777,33 @@ export default function CertificateForm() {
                   {signatureMethod === 'draw' && (
                     <div className="accordion-content">
                       <div className="form-group">
-                        <label htmlFor="signatureCanvas">O dibuja tu firma:</label>
+                        {/* botón que abre el modal */}
                         <button
+                          type="button"
                           className="btn-edit"
-                          onClick={() => setShowSignatureTools(s => !s)}
+                          onClick={() => setShowSignatureModal(true)}
                         >
-                          {showSignatureTools ? 'Ocultar herramientas' : 'Mostrar herramientas'}
+                          Bocetar firma
                         </button>
 
-                        {showSignatureTools && (
-                          <div className="signature-tools">
-                            <label>
-                              Color: <input type="color" value={brushColor}
-                                onChange={e => setBrushColor(e.target.value)} />
-                            </label>
-                            <label>
-                              Grosor: <input type="range" min="1" max="10"
-                                value={brushSize}
-                                onChange={e => setBrushSize(+e.target.value)} />
-                            </label>
-                            <button onClick={clearCanvas}>🗑️ Borrar boceto</button>
-                            <button className="btn-edit" onClick={handleAcceptSignature}>
-                              ✔️ Aceptar firma
-                            </button>
-                          </div>
+                        {/* botón inline para borrar firma existente */}
+                        {signatureFileUrl && (
+                          <button
+                            type="button"
+                            className="btn-clear"
+                            onClick={() => {
+                              setSignatureFileUrl(null);
+                              clearCanvas();
+                            }}
+                          >
+                            🗑️ Borrar firma
+                          </button>
                         )}
-                        <canvas
-                          id="signatureCanvas"
-                          ref={signatureCanvasRef}
-                          width={300}
-                          height={100}
-                          className="signature-canvas"
-                        />
-                        <button type="button" className="btn-clear" onClick={clearCanvas}>
-                          🗑️ Borrar boceto
-                        </button>
                       </div>
                     </div>
                   )}
                 </div>
+
 
               </div>
             </div>
@@ -826,6 +817,70 @@ export default function CertificateForm() {
         </aside>
 
       </section >
+
+      {showSignatureModal && (
+        <div className="signature-modal-overlay">
+          <div className="signature-modal">
+            <canvas
+              ref={signatureCanvasRef}
+              width={600}
+              height={200}
+              className="signature-canvas"
+            />
+            <div className="signature-tools">
+              <label>
+                Color: <input
+                  type="color"
+                  value={brushColor}
+                  onChange={e => setBrushColor(e.target.value)}
+                />
+              </label>
+              <label>
+                Grosor: <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={brushSize}
+                  onChange={e => setBrushSize(+e.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                className="btn-clear"
+                onClick={clearCanvas}
+              >
+                🗑️ Borrar boceto
+              </button>
+              <button
+                type="button"
+                className="btn-edit"
+                onClick={() => {
+                  // guardar firma y cerrar modal
+                  const dataUrl = signatureCanvasRef.current.toDataURL('image/png');
+                  setSignatureFileUrl(dataUrl);
+                  setShowSignatureModal(false);
+                  clearCanvas();
+                }}
+              >
+                ✔️ Aceptar
+              </button>
+              <button
+                type="button"
+                className="btn-clear"
+                onClick={() => {
+                  // descartar y cerrar
+                  clearCanvas();
+                  setShowSignatureModal(false);
+                }}
+              >
+                ❌ Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div >
   )
 }
