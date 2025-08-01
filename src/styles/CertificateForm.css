@@ -1745,3 +1745,32 @@ h1.cert-header.editable-text.move-down {
   background: #143554;
   box-shadow: 0 0 5px 1px #67d8f2;
 }
+
+
+
+
+/* -------- MARCA DE AGUA ------- */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;            /* ajusta al tamaño deseado */
+  opacity: 0.1;          /* débil, sólo de fondo */
+  pointer-events: none;  /* no interfiere con la edición */
+  z-index: 0;            /* siempre detrás */
+}
+
+/* Asegura que el resto suba encima */
+/* .certificate > *:not(.watermark) {
+  position: relative;
+  z-index: 1;
+} */
+
+/* Mini-preview dentro del slide */
+.watermark-preview {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  margin-top: 0.5rem;
+}

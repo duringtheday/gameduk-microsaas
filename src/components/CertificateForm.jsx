@@ -33,6 +33,16 @@ export default function CertificateForm() {
     setShowWelcome(true);
   }, []);
 
+  // Marca de agua
+  const [watermarkUrl, setWatermarkUrl] = useState(null);
+  const watermarkInputRef = useRef(null);
+
+  const handleWatermark = e => {
+    const file = e.target.files[0];
+    if (file) setWatermarkUrl(URL.createObjectURL(file));
+  };
+
+
 
   // — FLAGS para “Emitido por” —
   // showIssuerText = true si el usuario ingresó texto en el input "issuer"
@@ -471,6 +481,9 @@ export default function CertificateForm() {
               fontFamily: fontFamily,
             }}
           >
+            {watermarkUrl && (
+              <img src={watermarkUrl} className="watermark" alt="Marca de agua" />
+            )}
             {/* LOGO DEL CURSO */}
             <div className="certificate-header-block">
               {logoUrl ? (
@@ -785,6 +798,44 @@ export default function CertificateForm() {
               onKeyDown={e => { if (e.key === 'Enter') setCurrentStep(s => Math.min(s + 1, steps.length - 1)); }}
               tabIndex={0}
             >
+
+
+              {/* ▶️ Paso: Marca de Agua */}
+              <div className="slide">
+                <div
+                  className="form-group drop-zone"
+                  onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+                  onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
+                  onDrop={e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file) setWatermarkUrl(URL.createObjectURL(file));
+                  }}
+                >
+                  <label htmlFor="watermark" className="file-label">
+                    <input
+                      ref={watermarkInputRef}
+                      type="file"
+                      id="watermark"
+                      accept="image/*"
+                      onChange={handleWatermark}
+                      style={{ display: 'none' }}
+                    />
+                    Arrastra o haz clic para subir tu marca de agua
+                  </label>
+                  {watermarkUrl && (
+                    <>
+                      <img src={watermarkUrl} alt="Preview marca de agua" className="watermark-preview" />
+                      <button type="button" className="btn-clear" onClick={() => setWatermarkUrl(null)}>
+                        🗑️ Borrar marca
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+
               {/* ▶️ Paso: Subir Logo (logo input) */}
               <div className="slide">
                 <div
