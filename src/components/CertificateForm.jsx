@@ -79,6 +79,63 @@ export default function CertificateForm() {
     window.print();
   };
 
+
+  // Descargar como PDF A4
+  const handleGeneratePDF = async () => {
+    if (!certificateRef.current) return;
+    const el = certificateRef.current;
+
+    // 1. Ocultar sólo los iconos de carga
+    const icons = el.querySelectorAll(`
+      .upload-icon,
+      .folder-sign,
+      .editable-logo.empty,
+      .editable-seal.empty,
+      .editable-issuer-logo.empty,
+      .issuer-logo-img.empty,
+      .signature-text-upload
+  `);
+    const prevDisplay = Array.from(icons).map(icon => icon.style.display);
+    icons.forEach(icon => icon.style.display = 'none');
+
+    // 2. Forzar fondo sólido con el primer color de bgColors
+    const originalBgImage = el.style.backgroundImage;
+    const originalBgColor = el.style.backgroundColor;
+    el.style.backgroundImage = '';
+    el.style.backgroundColor = bgColors[0];
+
+    // 3. Capturar con html2canvas respetando degradados / colores
+    const canvas = await html2canvas(el, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: bgColors[0]
+    });
+
+    // 4. Restaurar fondo e iconos
+    el.style.backgroundImage = originalBgImage;
+    el.style.backgroundColor = originalBgColor;
+    icons.forEach((icon, i) => icon.style.display = prevDisplay[i] || '');
+
+    // 5. Generar PDF A4 landscape
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+    const pdfW = pdf.internal.pageSize.getWidth();
+    const pdfH = pdf.internal.pageSize.getHeight();
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+    pdf.save('Certificado_A4.pdf');
+  };
+
+//  ---------- terminar bloque "generar pdf" -------------
+
+//  -----------------------------------------------------
+
+
+
+
   const handleLogo = e => {
     const file = e.target.files[0]
     if (file) setLogoUrl(URL.createObjectURL(file))
@@ -312,15 +369,81 @@ export default function CertificateForm() {
   const borderColor = avgLuminance > 0.5 ? sorted[0] : sorted[sorted.length - 1];
 
 
+
+  // ---- FONTS ----
+  // Fuentes disponibles (asegúrate de importarlas o cargarlas vía Google Fonts/CSS)
+  const fonts = [
+    'Roboto, sans-serif',
+    'Open Sans, sans-serif',
+    'Lora, serif',
+    'Montserrat, sans-serif',
+    'Pacifico, cursive',
+    'Dancing Script, cursive',     // manuscrita elegante
+    'Indie Flower, cursive',       // divertida y desenfadada
+    'Sue Ellen Francisco, cursive' // estilo caligráfico
+  ];
+  const [fontFamily, setFontFamily] = useState(fonts[0]);
+
+
+
+  // ------------ APPLY FONT (PERSONALIZED) ----------------------
+  function applyFont(fontName) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+
+    // Intentamos envolver la selección con un <span>
+    const span = document.createElement('span');
+    span.style.fontFamily = fontName;
+    try {
+      range.surroundContents(span);
+    } catch {
+      // Fallback si la selección cruza nodos
+      document.execCommand('fontName', false, fontName);
+    }
+
+    sel.removeAllRanges();
+  }
+
+
+
+
+  // ------------ GENERAR CERTIFICADO ----------------------
+  // al inicio del componente, junto a los otros useState:
+  const [showPreview, setShowPreview] = useState(false);
+
+  // función para abrir/cerrar el modal
+  const togglePreview = () => setShowPreview(v => !v);
+
+
+
+
+  // eliminar editable del modal para previsualizar
+  const getSanitizedHTML = () => {
+    if (!certificateRef.current) return '';
+    // 1. Eliminamos cualquier atributo contenteditable="..." y suppressContentEditableWarning
+    // 2. También quitamos en línea cualquier input, botón de carpeta y drag-zones
+    return certificateRef.current.innerHTML
+      .replace(/contenteditable="[^"]*"/g, '')
+      .replace(/suppressContentEditableWarning/g, '')
+      .replace(/<input[\s\S]*?>/g, '')
+      .replace(/<button[^>]*class="upload-icon"[\s\S]*?<\/button>/g, '');
+  };
+
+
+
+
   return (
     <div className="certificate-form-container">
       {/* ─── Vista Previa del Certificado ──────────────────────────────────────── */}
       <section className="preview-section" >
-        <div className="certificate"
+        <div
+          className="certificate"
           ref={certificateRef}
           style={{
             backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
-            border: `5px solid ${borderColor}`    // borde contrastante
+            border: `5px solid ${borderColor}`,
+            fontFamily: fontFamily,
           }}
         >
           {/* LOGO DEL CURSO */}
@@ -423,25 +546,28 @@ export default function CertificateForm() {
 
                 <span
                   className="detail-value editable-date"
-                  onClick={() => issueDateRef.current.showPicker()}
+                  onClick={() => {
+                    // enfocamos el input y luego abrimos el picker
+                    issueDateRef.current.focus();
+                    issueDateRef.current.showPicker();
+                  }}
                 >
                   {issueDate
                     ? new Date(issueDate).toLocaleDateString('es-ES', {
                       day: 'numeric',
-
                       month: 'long',
                       year: 'numeric'
                     })
                     : 'Haz clic para elegir fecha'}
                 </span>
-
                 <input
                   ref={issueDateRef}
                   type="date"
                   value={issueDate}
-                  onChange={(e) => setIssueDate(e.target.value)}
+                  onChange={e => setIssueDate(e.target.value)}
                   className="date-hidden-input"
                 />
+
               </div>
 
 
@@ -507,15 +633,25 @@ export default function CertificateForm() {
                       onClick={() => signatureFileRef.current.click()}
                     />
                   ) : (
-                    <span
-                      className="signature-name editable-signature-text"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => setSignatureText(e.target.innerText)}
-                      onClick={() => signatureFileRef.current.click()}
-                    >
-                      {signatureText}
-                    </span>
+                    <div className="signature-text-upload">
+                      <span
+                        className="signature-name editable-signature-text"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={e => setSignatureText(e.target.innerText)}
+                      >
+                        {signatureText}
+                      </span>
+                      {/* icono de carpeta que abre el file picker */}
+                      <button
+                        type="button"
+                        className="upload-icon"
+                        onClick={() => signatureFileRef.current.click()}
+                        title="Subir imagen de firma"
+                      >
+                        <small className='folder-sign'>📂</small>
+                      </button>
+                    </div>
                   )}
                   <input
                     ref={signatureFileRef}
@@ -525,6 +661,7 @@ export default function CertificateForm() {
                     onChange={e => handleFile(e, setSignatureFileUrl)}
                   />
                   <span className="signature-role">Cargo Firmante</span>
+
                 </div>
               </div>
 
@@ -544,50 +681,64 @@ export default function CertificateForm() {
             </div>
 
             {/* botón imprimir */}
-            <button
-              type="button"
-              className="print-btn"
-              onClick={handlePrint}
-            >
-              {/* <button
-            onClick={() => window.print()}
-            className="print-btn no-capture"
-          > */}
-              {/* Descargar/Imprimir */}
-              Imprimir
-            </button>
+
 
           </div>
         </div>
 
 
-        {/* ─── BARRA DE CONTROL DE FONDO ───────────────────────────────────────────────────────── */}
-        <div className="color-control-bar">
-          {bgColors.map((col, i) => (
-            <div key={i} className="color-stop">
-              <input
-                type="color"
-                value={col}
-                onChange={e => {
-                  const newCols = [...bgColors];
-                  newCols[i] = e.target.value;
-                  setBgColors(newCols);
-                }}
-              />
-              {bgColors.length > 1 && (
-                <button
-                  type="button"
-                  className="remove-color-stop"
-                  onClick={() => removeColorStop(i)}
-                >−</button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            className="add-color-stop"
-            onClick={() => setBgColors([...bgColors, '#ffffff'])}
-          >＋</button>
+        {/* -------- CERTIFICATE BAR (colors & fonts) ---------- */}
+        <div className='certificate-bar'>
+
+          {/* ─── BARRA DE SELECCIÓN DE FUENTE ─────────────────────────────────────── */}
+          <div className="font-picker">
+            <label htmlFor="fontPicker">Fuente:</label>
+            <select id="fontPicker" onChange={e => applyFont(e.target.value)}>
+              <option value="Segoe UI, sans-serif">Segoe UI</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Roboto, sans-serif">Roboto</option>
+              <option value="Open Sans, sans-serif">Open Sans</option>
+              <option value="Lora, serif">Lora</option>
+              <option value="Montserrat, sans-serif">Montserrat</option>
+              <option value="Pacifico, cursive">Pacifico</option>
+              <option value="Dancing Script, cursive">Dancing Script</option>
+              <option value="Indie Flower, cursive">Indie Flower</option>
+              <option value="Sue Ellen Francisco, cursive">Sue Ellen Francisco</option>
+            </select>
+          </div>
+
+
+
+          {/* ─── BARRA DE CONTROL DE FONDO ───────────────────────────────────────────────────────── */}
+          <div className="color-control-bar">
+            {bgColors.map((col, i) => (
+              <div key={i} className="color-stop">
+                <input
+                  type="color"
+                  value={col}
+                  onChange={e => {
+                    const newCols = [...bgColors];
+                    newCols[i] = e.target.value;
+                    setBgColors(newCols);
+                  }}
+                />
+                {bgColors.length > 1 && (
+                  <button
+                    type="button"
+                    className="remove-color-stop"
+                    onClick={() => removeColorStop(i)}
+                  >−</button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              className="add-color-stop"
+              onClick={() => setBgColors([...bgColors, '#ffffff'])}
+            >＋</button>
+
+          </div>
 
         </div>
 
@@ -899,6 +1050,17 @@ export default function CertificateForm() {
           >›</button>
         </aside>
 
+        {/* botón Generar Certificado */}
+        <div className="generate-btn-container">
+          <button
+            type="button"
+            className="btn-generate"
+            onClick={togglePreview}
+          >
+            Generar Certificado
+          </button>
+        </div>
+
       </section >
 
       {showSignatureModal && (
@@ -959,6 +1121,51 @@ export default function CertificateForm() {
                 ❌ Cancelar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showPreview && (
+        <div className="preview-modal-overlay" onClick={togglePreview}>
+          <div className="preview-modal" onClick={e => e.stopPropagation()}>
+            <button className="close-modal" onClick={togglePreview}>×</button>
+            {/* clona o referencia el certificado */}
+            <div className="preview-content">
+              {/* puedes clonar con innerHTML o renderizar el mismo JSX */}
+              <div
+                className="certificate"
+                contentEditable={false}
+                dangerouslySetInnerHTML={{ __html: getSanitizedHTML() }}
+                style={{
+                  backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
+                  border: `5px solid ${borderColor}`,
+                  fontFamily: fontFamily,
+                }}
+              />
+            </div>
+
+            {/* botón imprimir */}
+            <button
+              type="button"
+              className="print-btn"
+              onClick={handlePrint}
+            >
+              {/* <button
+            onClick={() => window.print()}
+            className="print-btn no-capture"
+          > */}
+              {/* Descargar/Imprimir */}
+              Imprimir
+            </button>
+
+            {/* Botón Descargar */}
+            <button
+              type="button"
+              className="print-btn"
+              onClick={handleGeneratePDF}
+            >
+              Descargar PDF
+            </button>
           </div>
         </div>
       )}

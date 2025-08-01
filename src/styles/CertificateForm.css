@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&family=Indie+Flower&family=Roboto&family=Open+Sans&family=Lora&family=Sue+Ellen+Francisco&family=Montserrat&display=swap');
+
+
 html,
 body {
   height: 100%;
@@ -22,8 +25,8 @@ body {
 .certificate-form-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;     
-  align-items: center;         
+  justify-content: center;
+  align-items: center;
   gap: 2rem;
   /* padding: 2rem; */
   margin: 0;
@@ -81,6 +84,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 2rem;
 }
 
 /* ─── CERTIFICADO ─────────────────────────────────────────────────────────── */
@@ -109,16 +113,16 @@ body {
   /* background-clip: padding-box, border-box !important; */
 
   /* resto de tus estilos */
-  width: 100% !important;
-  max-width: 580px !important;
+  width: 100%;
+  max-width: 580px;
   /* aspect-ratio: 4 / 2.8; */
-  aspect-ratio: 297 / 210 !important;
-  padding: 2rem !important;
-  position: relative !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4) !important;
-  overflow: hidden !important;
-  text-align: left !important;
+  aspect-ratio: 297 / 210;
+  padding: 2rem;
+  position: relative;
+  color: #ffffff;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  text-align: left;
 }
 
 /* Tira vertical superior derecha */
@@ -454,7 +458,7 @@ h1.cert-header.editable-text.move-down {
 
 
     /* Aseguramos que el inline backgroundImage prevalezca */
-  background-image: none !important;
+    background-image: none !important;
   }
 
 
@@ -963,7 +967,7 @@ h1.cert-header.editable-text.move-down {
   width: 0;
   height: 0;
   opacity: 0;
-  pointer-events: none;
+  /* pointer-events: none; */
   /* el clic lo hace el texto */
 }
 
@@ -1133,7 +1137,7 @@ h1.cert-header.editable-text.move-down {
 
 .form-slider {
   position: relative;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
   overflow: hidden;
 }
 
@@ -1145,7 +1149,8 @@ h1.cert-header.editable-text.move-down {
 }
 
 .form-slider .slide {
-  flex: 0 0 16.6667%;      /* cada slide = 1/6 = 16.66% del ancho */
+  flex: 0 0 16.6667%;
+  /* cada slide = 1/6 = 16.66% del ancho */
   display: flex;
   padding: 0.5rem;
   box-sizing: border-box;
@@ -1216,35 +1221,42 @@ h1.cert-header.editable-text.move-down {
 .signature-canvas {
   border: 1px dashed #333;
   background: #f9f9f9;
-  touch-action: none; 
+  touch-action: none;
   cursor: crosshair;
 }
+
 .signature-tools {
   display: flex;
   gap: 1rem;
   margin-bottom: 0.5rem;
   flex-wrap: wrap;
 }
+
 .signature-tools label {
   display: flex;
   align-items: center;
   gap: 0.3rem;
 }
+
 /* ACRODEÓN FIRMA */
 .accordion {
   width: 100%;
 }
+
 .accordion-item {
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .accordion-header {
   cursor: pointer;
   padding: 0.5rem 0;
   font-weight: 600;
 }
+
 .accordion-content {
   padding: 0.5rem 0;
 }
+
 /* Herramientas de boceto */
 .signature-tools {
   display: flex;
@@ -1252,6 +1264,7 @@ h1.cert-header.editable-text.move-down {
   gap: 1rem;
   margin-bottom: 0.5rem;
 }
+
 .signature-tools label {
   display: flex;
   align-items: center;
@@ -1273,7 +1286,7 @@ h1.cert-header.editable-text.move-down {
   border-radius: 8px;
   overflow-x: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.4) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
   margin-bottom: 1rem;
 }
 
@@ -1281,11 +1294,13 @@ h1.cert-header.editable-text.move-down {
 .form-controls::-webkit-scrollbar {
   height: 6px;
 }
+
 .form-controls::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .form-controls::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   border-radius: 3px;
 }
 
@@ -1316,13 +1331,22 @@ h1.cert-header.editable-text.move-down {
 
 
 
+/* -------- CERTIFICATE BAR (colors & fonts) ---------- */
+.certificate-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+
 /* ─── BARRA DE CONTROL DE COLORES ─────────────────────────────────────────── */
 .color-control-bar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   overflow-x: auto;
   margin: 1rem 0;
@@ -1344,8 +1368,8 @@ h1.cert-header.editable-text.move-down {
   font-size: 1.2rem;
   width: 2.2rem;
   height: 2.2rem;
-  background: rgba(255,255,255,0.2);
-  border: 1px dashed rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   color: #fff;
   cursor: pointer;
@@ -1353,7 +1377,7 @@ h1.cert-header.editable-text.move-down {
 }
 
 .color-control-bar .add-color-stop:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .color-control-bar .remove-color-stop {
@@ -1364,15 +1388,16 @@ h1.cert-header.editable-text.move-down {
   font-size: 1.2rem;
   width: 1.8rem;
   height: 1.8rem;
-  background: rgba(255,255,255,0.2);
-  border: 1px dashed rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   color: #fff;
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .color-control-bar .remove-color-stop:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 
@@ -1383,11 +1408,14 @@ h1.cert-header.editable-text.move-down {
 /* CONTENEDOR DEL CANVAS */
 .canvas-wrapper {
   overflow: hidden;
-  max-height: 100px;         /* altura compacta */
+  max-height: 100px;
+  /* altura compacta */
   transition: max-height 0.3s ease;
 }
+
 .canvas-wrapper.expanded {
-  max-height: 300px;         /* altura expandida */
+  max-height: 300px;
+  /* altura expandida */
 }
 
 /* cuando está expandido, el propio canvas puede estirarse */
@@ -1404,13 +1432,13 @@ h1.cert-header.editable-text.move-down {
   position: fixed;
   top: 0;
   left: 0;
-  width:100vw;
-  height:100vh;
-  background: rgba(0,0,0,0.5);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:1000;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 /* ventana del modal */
@@ -1440,3 +1468,227 @@ h1.cert-header.editable-text.move-down {
 
 
 
+/* ---- FONTS CONTROL (fontpicker) ---- */
+.font-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  /* espacio arriba/abajo */
+  padding: 0.5rem;
+  /* un poco de relleno */
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow-x: auto;
+  /* si se añaden más opciones */
+}
+
+.font-picker label {
+  font-size: 0.85rem;
+  color: #fefaff;
+  white-space: nowrap;
+}
+
+.font-picker select {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  /* hereda la familia de fuente actual */
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  /* quita el estilo nativo y usa el tuyo si quieres */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.font-picker select option {
+  background-color: #c1b2c5;
+  color: #2b0249;
+}
+
+/* .font-picker select option:hover {
+  background-color: #4B0082 !important;
+  color: #ecd1ff !important;
+} */
+
+.font-picker select:focus {
+  outline: none;
+  border-color: #bf55c7;
+  box-shadow: 0 0 5px 1px rgba(206, 54, 214, 1);
+}
+
+
+
+
+
+
+/* Contenedor horizontal para texto + icono */
+.signature-text-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botón de icono estilo carpeta */
+.upload-icon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #fff;
+  /* color del icono */
+  padding: 0;
+}
+
+/* Al hover, resaltamos */
+.upload-icon:hover {
+  color: #ff6f00;
+}
+
+
+
+/* folder sign */
+.folder-sign {
+  font-size: 9px;
+}
+
+
+
+
+
+/* ---- GENERAR CERTIFICADO ---- */
+/* Botón generar */
+.preview-content .certificate {
+  max-width: 800px;
+  width: 100%;
+}
+
+.generate-btn-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.btn-generate {
+  background: #6a1b9a;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-generate:hover {
+  background: #4a148c;
+}
+
+/* Modal overlay */
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal box */
+.preview-modal {
+  background: #2f2558;
+  padding: 2rem;
+  border-radius: 8px;
+  /* width: auto; */
+  /* height: auto; */
+  overflow: auto;
+  position: relative;
+}
+
+.preview-modal .certificate {
+  width: 580px !important;
+  /* height: none; */
+}
+/* ── Desactivar cualquier interacción dentro de la preview-modal ── */
+.preview-modal .certificate,
+.preview-modal .certificate * {
+  pointer-events: none !important;
+  user-select: none   !important;
+}
+
+/* --------------------------------------------------
+   Desactivar guías y edición sólo en la preview-modal
+--------------------------------------------------- */
+.preview-modal .certificate [contenteditable] {
+  /* si quedara alguna propiedad inline, la neutralizamos */
+  contenteditable: false !important;
+}
+
+.preview-modal .certificate *:hover,
+.preview-modal .certificate *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+/* ocultar cualquier print-btn fuera del modal */
+.preview-section .print-btn {
+  display: none !important;
+}
+
+/* Pero queremos poder clicar en el botón de imprimir y cerrar, así que los incluimos aparte */
+.preview-modal .print-btn,
+.preview-modal .close-modal {
+  pointer-events: all !important;
+  user-select: auto   !important;
+}
+/* mostrarlo solo dentro del modal */
+.preview-modal .print-btn {
+  display: block;
+}
+.preview-modal .folder-sign {
+  display: none;
+}
+
+
+/* Botón de cierre */
+.close-modal {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+/* DESCARGAR PDF */
+.pdf-print-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.pdf-print-buttons .print-btn {
+  background: #ff6f00;
+}
+
+.pdf-print-buttons .print-btn:hover {
+  background: #e65100;
+}
