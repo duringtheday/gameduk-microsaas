@@ -272,11 +272,57 @@ export default function CertificateForm() {
 
 
 
+  // --- CONTROL COLORS ---
+  const [bgColors, setBgColors] = useState(['#1E0D6E', '#5D14A8']);
+  const removeColorStop = i => {
+    if (bgColors.length > 1) {
+      const newCols = bgColors.filter((_, idx) => idx !== i);
+      setBgColors(newCols);
+    }
+  };
+
+  // función para calcular luminancia y poder ordenar colores
+  function hexToLuminance(hex) {
+    const c = hex.slice(1);
+    const rgb = parseInt(c, 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+    // fórmula de luminancia relativa
+    return 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+  }
+
+  // --- RIBBON - extrae color más claro y más oscuro para la cinta
+  const sorted = [...bgColors].sort((a, b) => hexToLuminance(a) - hexToLuminance(b));
+
+  // const ribbonStops = [sorted[0], sorted[sorted.length - 1]];
+  // Calculamos luminancia promedio para decidir un borde contrastante:
+  const avgLuminance =
+    bgColors.reduce((sum, c) => sum + hexToLuminance(c), 0) / bgColors.length;
+
+  // **RIBBON**: si el fondo es claro (>0.5) usamos los 2 colores más oscuros,
+  // si es oscuro, los 2 más claros
+  let ribbonStops;
+  if (avgLuminance > 0.5) {
+    ribbonStops = sorted.slice(0, 2);       // dos más oscuros
+  } else {
+    ribbonStops = sorted.slice(-2);         // dos más claros
+  }
+  // --- BORDER - si el fondo en promedio es muy claro (>0.5), elige el más oscuro, sino el más claro:
+  const borderColor = avgLuminance > 0.5 ? sorted[0] : sorted[sorted.length - 1];
+
+
   return (
     <div className="certificate-form-container">
       {/* ─── Vista Previa del Certificado ──────────────────────────────────────── */}
       <section className="preview-section" >
-        <div className="certificate" ref={certificateRef}>
+        <div className="certificate"
+          ref={certificateRef}
+          style={{
+            backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
+            border: `5px solid ${borderColor}`    // borde contrastante
+          }}
+        >
           {/* LOGO DEL CURSO */}
           <div className="certificate-header-block">
             {logoUrl ? (
@@ -298,7 +344,11 @@ export default function CertificateForm() {
           </div>
           <div className="certificate-body-block">
             {/* cinta y sello */}
-            <div className="ribbon" />
+            <div className="ribbon"
+              style={{
+                background: `linear-gradient(to bottom, ${ribbonStops.join(',')})`
+              }}
+            />
             {/* SELLO */}
             {sealUrl ? (
               <img
@@ -509,7 +559,40 @@ export default function CertificateForm() {
 
           </div>
         </div>
-        {/* ─── Formulario ───────────────────────────────────────────────────────── */}
+
+
+        {/* ─── BARRA DE CONTROL DE FONDO ───────────────────────────────────────────────────────── */}
+        <div className="color-control-bar">
+          {bgColors.map((col, i) => (
+            <div key={i} className="color-stop">
+              <input
+                type="color"
+                value={col}
+                onChange={e => {
+                  const newCols = [...bgColors];
+                  newCols[i] = e.target.value;
+                  setBgColors(newCols);
+                }}
+              />
+              {bgColors.length > 1 && (
+                <button
+                  type="button"
+                  className="remove-color-stop"
+                  onClick={() => removeColorStop(i)}
+                >−</button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="add-color-stop"
+            onClick={() => setBgColors([...bgColors, '#ffffff'])}
+          >＋</button>
+
+        </div>
+
+
+        {/* ─── ASIDE FORM ───────────────────────────────────────────────────────── */}
 
         <aside className="form-section form-slider">
           <button

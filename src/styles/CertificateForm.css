@@ -91,22 +91,22 @@ body {
   border-radius: 30px !important;
 
   /* borde transparente para dejar espacio al degradado */
-  border: 4.85px solid transparent !important;
+  /* border: 4.85px solid transparent !important; */
 
   /* doble fondo: 
      1) interior (padding-box) con tu degradado índigo→violeta→púrpura 
      2) exterior (border-box) con el degradado rosa→magenta */
-  background:
+  /* background:
     linear-gradient(to right,
       #1E0D6E 0%,
       #3B0F91 45%,
       #5D14A8 100%) padding-box,
     linear-gradient(to right,
       #f93dff 0%,
-      #b032c2 100%) border-box !important;
+      #b032c2 100%) border-box !important; */
 
   /* clipping para que cada fondo se limite a su caja */
-  background-clip: padding-box, border-box !important;
+  /* background-clip: padding-box, border-box !important; */
 
   /* resto de tus estilos */
   width: 100% !important;
@@ -445,12 +445,16 @@ h1.cert-header.editable-text.move-down {
     aspect-ratio: 297 / 210 !important;
     border-radius: 30px !important;
     border: 5px solid transparent !important;
-    background:
+    /* background:
       linear-gradient(to right, #1E0D6E 0%, #3B0F91 45%, #5D14A8 100%) padding-box,
-      linear-gradient(to right, #f93dff 0%, #b032c2 100%) border-box !important;
-    background-clip: padding-box, border-box;
+      linear-gradient(to right, #f93dff 0%, #b032c2 100%) border-box !important; */
+    /* background-clip: padding-box, border-box; */
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+
+
+    /* Aseguramos que el inline backgroundImage prevalezca */
+  background-image: none !important;
   }
 
 
@@ -1310,23 +1314,64 @@ h1.cert-header.editable-text.move-down {
   color: #fefaff;
 }
 
-/* Botón “＋” para añadir más colores al degradado */
-.form-controls .add-color {
+
+
+/* ─── BARRA DE CONTROL DE COLORES ─────────────────────────────────────────── */
+.color-control-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.color-control-bar .color-stop input[type="color"] {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.color-control-bar .add-color-stop {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   width: 2.2rem;
   height: 2.2rem;
   background: rgba(255,255,255,0.2);
   border: 1px dashed rgba(255,255,255,0.4);
   border-radius: 50%;
-  color: #fefaff;
+  color: #fff;
   cursor: pointer;
-  flex: none;
   transition: background 0.2s;
 }
-.form-controls .add-color:hover {
+
+.color-control-bar .add-color-stop:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.color-control-bar .remove-color-stop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.25rem;
+  font-size: 1.2rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  background: rgba(255,255,255,0.2);
+  border: 1px dashed rgba(255,255,255,0.4);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.color-control-bar .remove-color-stop:hover {
   background: rgba(255,255,255,0.3);
 }
 
@@ -1389,3 +1434,9 @@ h1.cert-header.editable-text.move-down {
   display: flex;
   gap: 1rem;
 }
+
+
+
+
+
+
