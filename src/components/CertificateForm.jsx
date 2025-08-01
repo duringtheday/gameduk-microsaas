@@ -25,6 +25,14 @@ export default function CertificateForm() {
   // Nuevos estados para firma
   const [signatureFileUrl, setSignatureFileUrl] = useState(null)
   const [signatureText, setSignatureText] = useState('Nombre Firmante')
+  // state para mostrar el popup al cargar
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  // una vez montado, garantizamos que esté visible
+  useEffect(() => {
+    setShowWelcome(true);
+  }, []);
+
 
   // — FLAGS para “Emitido por” —
   // showIssuerText = true si el usuario ingresó texto en el input "issuer"
@@ -129,9 +137,9 @@ export default function CertificateForm() {
     pdf.save('Certificado_A4.pdf');
   };
 
-//  ---------- terminar bloque "generar pdf" -------------
+  //  ---------- terminar bloque "generar pdf" -------------
 
-//  -----------------------------------------------------
+  //  -----------------------------------------------------
 
 
 
@@ -434,745 +442,762 @@ export default function CertificateForm() {
 
 
   return (
-    <div className="certificate-form-container">
-      {/* ─── Vista Previa del Certificado ──────────────────────────────────────── */}
-      <section className="preview-section" >
-        <div
-          className="certificate"
-          ref={certificateRef}
-          style={{
-            backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
-            border: `5px solid ${borderColor}`,
-            fontFamily: fontFamily,
-          }}
-        >
-          {/* LOGO DEL CURSO */}
-          <div className="certificate-header-block">
-            {logoUrl ? (
-              <img
-                src={logoUrl}
-                className="cert-logo editable-logo"
-                onClick={() => logoInputRef.current.click()}
-              />
-            ) : (
-              <div
-                className="cert-logo editable-logo empty"
-                onClick={() => logoInputRef.current.click()}
-              />
-            )}
-            {/* TÍTULO */}
-            <h1 className="cert-header editable-text" contentEditable suppressContentEditableWarning>
-              Certificado de Finalización
-            </h1>
+    <>
+      {showWelcome && (
+        <div className="welcome-modal-overlay">
+          <div className="welcome-modal">
+            <p className="welcome-text">
+              Crea Tus Propios Certificados Personalizados por $1
+            </p>
+            <button
+              className="welcome-accept-btn"
+              onClick={() => setShowWelcome(false)}
+            >
+              Aceptar
+            </button>
           </div>
-          <div className="certificate-body-block">
-            {/* cinta y sello */}
-            <div className="ribbon"
-              style={{
-                background: `linear-gradient(to bottom, ${ribbonStops.join(',')})`
-              }}
-            />
-            {/* SELLO */}
-            {sealUrl ? (
-              <img
-                src={sealUrl}
-                className="verified-stamp editable-seal"
-                onClick={() => sealInputRef.current.click()}
-              />
-            ) : (
-              <div
-                className="verified-stamp editable-seal empty"
-                onClick={() => sealInputRef.current.click()}
-              />
-            )}
+        </div>
+      )}
 
-            <input
-              ref={sealInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                const file = e.target.files[0]
-                if (file) setSealUrl(URL.createObjectURL(file))
-              }}
-            />
-
-
-
-            {/* SUBTÍTULO */}
-            <p
-              className="cert-validate editable-text"
-              contentEditable
-              suppressContentEditableWarning
-            >
-              Este certificado valida que
-            </p>
-
-            {/* NOMBRE DEL USUARIO */}
-            <h2
-              className="cert-name editable-text"
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => setUserName(e.target.innerText)}
-            >
-              {userName}
-            </h2>
-
-            {/* TEXTO INTERMEDIO */}
-            <p
-              className="cert-complete editable-text"
-              contentEditable
-              suppressContentEditableWarning
-            >
-              ha completado exitosamente el reto
-            </p>
-
-            {/* CURSO */}
-            <h3
-              className="cert-course editable-text"
-              contentEditable
-              suppressContentEditableWarning
-            >
-              Desafío de Storytelling con Datos
-            </h3>
-
-
-            {/* fechas, emisor y firma en una sola fila */}
-            <div className="cert-details">
-              {/* 1) Emitido el */}
-              {/* FECHA */}
-              <div className="detail-item date-container">
-                <span className="detail-label">Emitido el:</span>
-
-                <span
-                  className="detail-value editable-date"
-                  onClick={() => {
-                    // enfocamos el input y luego abrimos el picker
-                    issueDateRef.current.focus();
-                    issueDateRef.current.showPicker();
-                  }}
-                >
-                  {issueDate
-                    ? new Date(issueDate).toLocaleDateString('es-ES', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })
-                    : 'Haz clic para elegir fecha'}
-                </span>
-                <input
-                  ref={issueDateRef}
-                  type="date"
-                  value={issueDate}
-                  onChange={e => setIssueDate(e.target.value)}
-                  className="date-hidden-input"
+      <div className="certificate-form-container">
+        {/* ─── Vista Previa del Certificado ──────────────────────────────────────── */}
+        <section className="preview-section" >
+          <div
+            className="certificate"
+            ref={certificateRef}
+            style={{
+              backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
+              border: `5px solid ${borderColor}`,
+              fontFamily: fontFamily,
+            }}
+          >
+            {/* LOGO DEL CURSO */}
+            <div className="certificate-header-block">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  className="cert-logo editable-logo"
+                  onClick={() => logoInputRef.current.click()}
                 />
-
-              </div>
-
-
-
-
-              {/* 2) Emitido por */}
-              {/* EMISOR */}
-              <div
-                className={
-                  `detail-item issuer-item` +
-                  (issuer.trim() ? ' has-text' : '') +
-                  (issuerLogoUrl ? ' has-logo' : '')
-                }
-              >
-                <span className="detail-label">Emitido por:</span>
-
-                {/* Texto editable */}
-                <span
-                  className="detail-value editable-issuer-text"
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => setIssuer(e.target.innerText)}
-                >
-                  {issuer}
-                </span>
-
-                {/* Logo editable */}
-                {issuerLogoUrl ? (
-                  <img
-                    src={issuerLogoUrl}
-                    className="issuer-logo-img editable-issuer-logo"
-                    onClick={() => issuerLogoInputRef.current.click()}
-                  />
-                ) : (
-                  <div
-                    className="issuer-logo-img editable-issuer-logo empty"
-                    onClick={() => issuerLogoInputRef.current.click()}
-                  />
-                )}
-
-                <input
-                  ref={issuerLogoInputRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={(e) => {
-                    const file = e.target.files[0]
-                    if (file) setIssuerLogoUrl(URL.createObjectURL(file))
-                  }}
+              ) : (
+                <div
+                  className="cert-logo editable-logo empty"
+                  onClick={() => logoInputRef.current.click()}
                 />
-              </div>
-
-
-              {/* 3) Firma */}
-              {/* FIRMA */}
-              <div className="detail-item signature-item">
-                <div className="signature-box">
-                  {signatureFileUrl ? (
-                    <img
-                      src={signatureFileUrl}
-                      alt="Firma cargada"
-                      className="signature-img editable-signature"
-                      onClick={() => signatureFileRef.current.click()}
-                    />
-                  ) : (
-                    <div className="signature-text-upload">
-                      <span
-                        className="signature-name editable-signature-text"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={e => setSignatureText(e.target.innerText)}
-                      >
-                        {signatureText}
-                      </span>
-                      {/* icono de carpeta que abre el file picker */}
-                      <button
-                        type="button"
-                        className="upload-icon"
-                        onClick={() => signatureFileRef.current.click()}
-                        title="Subir imagen de firma"
-                      >
-                        <small className='folder-sign'>📂</small>
-                      </button>
-                    </div>
-                  )}
-                  <input
-                    ref={signatureFileRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden-input"
-                    onChange={e => handleFile(e, setSignatureFileUrl)}
-                  />
-                  <span className="signature-role">Cargo Firmante</span>
-
-                </div>
-              </div>
-
+              )}
+              {/* TÍTULO */}
+              <h1 className="cert-header editable-text" contentEditable suppressContentEditableWarning>
+                Certificado de Finalización
+              </h1>
             </div>
+            <div className="certificate-body-block">
+              {/* cinta y sello */}
+              <div className="ribbon"
+                style={{
+                  background: `linear-gradient(to bottom, ${ribbonStops.join(',')})`
+                }}
+              />
+              {/* SELLO */}
+              {sealUrl ? (
+                <img
+                  src={sealUrl}
+                  className="verified-stamp editable-seal"
+                  onClick={() => sealInputRef.current.click()}
+                />
+              ) : (
+                <div
+                  className="verified-stamp editable-seal empty"
+                  onClick={() => sealInputRef.current.click()}
+                />
+              )}
 
-            {/* verificación blockchain */}
-            {/* FOOTER */}
-            <div className="cert-footer">
-              <img src={badge} alt="Blockchain Badge" className="badge-icon" />
-              <span
-                className="verify-text editable-footer-text"
+              <input
+                ref={sealInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (file) setSealUrl(URL.createObjectURL(file))
+                }}
+              />
+
+
+
+              {/* SUBTÍTULO */}
+              <p
+                className="cert-validate editable-text"
                 contentEditable
                 suppressContentEditableWarning
               >
-                Verificar en: gameduk.com/verify/ID_UNICO_BLOCKCHAIN
-              </span>
-            </div>
+                Este certificado valida que
+              </p>
 
-            {/* botón imprimir */}
-
-
-          </div>
-        </div>
-
-
-        {/* -------- CERTIFICATE BAR (colors & fonts) ---------- */}
-        <div className='certificate-bar'>
-
-          {/* ─── BARRA DE SELECCIÓN DE FUENTE ─────────────────────────────────────── */}
-          <div className="font-picker">
-            <label htmlFor="fontPicker">Fuente:</label>
-            <select id="fontPicker" onChange={e => applyFont(e.target.value)}>
-              <option value="Segoe UI, sans-serif">Segoe UI</option>
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Times New Roman, serif">Times New Roman</option>
-              <option value="Roboto, sans-serif">Roboto</option>
-              <option value="Open Sans, sans-serif">Open Sans</option>
-              <option value="Lora, serif">Lora</option>
-              <option value="Montserrat, sans-serif">Montserrat</option>
-              <option value="Pacifico, cursive">Pacifico</option>
-              <option value="Dancing Script, cursive">Dancing Script</option>
-              <option value="Indie Flower, cursive">Indie Flower</option>
-              <option value="Sue Ellen Francisco, cursive">Sue Ellen Francisco</option>
-            </select>
-          </div>
-
-
-
-          {/* ─── BARRA DE CONTROL DE FONDO ───────────────────────────────────────────────────────── */}
-          <div className="color-control-bar">
-            {bgColors.map((col, i) => (
-              <div key={i} className="color-stop">
-                <input
-                  type="color"
-                  value={col}
-                  onChange={e => {
-                    const newCols = [...bgColors];
-                    newCols[i] = e.target.value;
-                    setBgColors(newCols);
-                  }}
-                />
-                {bgColors.length > 1 && (
-                  <button
-                    type="button"
-                    className="remove-color-stop"
-                    onClick={() => removeColorStop(i)}
-                  >−</button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              className="add-color-stop"
-              onClick={() => setBgColors([...bgColors, '#ffffff'])}
-            >＋</button>
-
-          </div>
-
-        </div>
-
-
-        {/* ─── ASIDE FORM ───────────────────────────────────────────────────────── */}
-
-        <aside className="form-section form-slider">
-          <button
-            className="slider-arrow left"
-            onClick={() => setCurrentStep(s => Math.max(s - 1, 0))}
-          >‹</button>
-
-          <div
-            className="slides"
-            // desplazamiento = paso × (100 / númeroDePasos)%
-            style={{
-              transform: `translateX(-${currentStep * (100 / steps.length)}%)`
-            }}
-            onKeyDown={e => { if (e.key === 'Enter') setCurrentStep(s => Math.min(s + 1, steps.length - 1)); }}
-            tabIndex={0}
-          >
-            {/* ▶️ Paso: Subir Logo (logo input) */}
-            <div className="slide">
-              <div
-                className="form-group drop-zone"
-                onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
-                onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
-                onDrop={e => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                  const file = e.dataTransfer.files[0];
-                  if (file) setLogoUrl(URL.createObjectURL(file));
-                }}
+              {/* NOMBRE DEL USUARIO */}
+              <h2
+                className="cert-name editable-text"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => setUserName(e.target.innerText)}
               >
-                <label htmlFor="logo" className="file-label">
+                {userName}
+              </h2>
+
+              {/* TEXTO INTERMEDIO */}
+              <p
+                className="cert-complete editable-text"
+                contentEditable
+                suppressContentEditableWarning
+              >
+                ha completado exitosamente el reto
+              </p>
+
+              {/* CURSO */}
+              <h3
+                className="cert-course editable-text"
+                contentEditable
+                suppressContentEditableWarning
+              >
+                Desafío de Storytelling con Datos
+              </h3>
+
+
+              {/* fechas, emisor y firma en una sola fila */}
+              <div className="cert-details">
+                {/* 1) Emitido el */}
+                {/* FECHA */}
+                <div className="detail-item date-container">
+                  <span className="detail-label">Emitido el:</span>
+
+                  <span
+                    className="detail-value editable-date"
+                    onClick={() => {
+                      // enfocamos el input y luego abrimos el picker
+                      issueDateRef.current.focus();
+                      issueDateRef.current.showPicker();
+                    }}
+                  >
+                    {issueDate
+                      ? new Date(issueDate).toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      })
+                      : 'Haz clic para elegir fecha'}
+                  </span>
                   <input
-                    ref={logoInputRef}
-                    type="file"
-                    id="logo"
-                    accept="image/*"
-                    onChange={handleLogo}
-                    style={{ display: 'none' }}
+                    ref={issueDateRef}
+                    type="date"
+                    value={issueDate}
+                    onChange={e => setIssueDate(e.target.value)}
+                    className="date-hidden-input"
                   />
-                  Arrastra o haz clic para subir tu logo
-                </label>
-                {logoUrl && (
-                  <>
-                    <img src={logoUrl} alt="Logo cargado" className="cert-logo" />
-                    <button type="button" className="btn-clear" onClick={() => setLogoUrl(null)}>
-                      🗑️ Borrar logo
-                    </button>
-                  </>
-                )}
-              </div>
 
-            </div>
-            {/* ▶️ Paso: Emitido por (texto) */}
-            <div className="slide">
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="issuerText">Emitido por (texto):</label>
-                <input
-                  type="text"
-                  id="issuerText"
-                  className="issuer-input"
-                  value={issuer}
-                  onChange={e => setIssuer(e.target.value)}
-                  ref={issuerInputRef}
-                />
-                <button
-                  type="button"
-                  className="btn-edit"
-                  onClick={() => issuerInputRef.current.focus()}
+
+
+
+                {/* 2) Emitido por */}
+                {/* EMISOR */}
+                <div
+                  className={
+                    `detail-item issuer-item` +
+                    (issuer.trim() ? ' has-text' : '') +
+                    (issuerLogoUrl ? ' has-logo' : '')
+                  }
                 >
-                  ✏️ Editar
-                </button>
-                <button
-                  type="button"
-                  className="btn-clear"
-                  onClick={clear(setIssuer)}
-                >
-                  🗑️ Borrar
-                </button>
+                  <span className="detail-label">Emitido por:</span>
 
-              </div>
+                  {/* Texto editable */}
+                  <span
+                    className="detail-value editable-issuer-text"
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => setIssuer(e.target.innerText)}
+                  >
+                    {issuer}
+                  </span>
 
-            </div>
+                  {/* Logo editable */}
+                  {issuerLogoUrl ? (
+                    <img
+                      src={issuerLogoUrl}
+                      className="issuer-logo-img editable-issuer-logo"
+                      onClick={() => issuerLogoInputRef.current.click()}
+                    />
+                  ) : (
+                    <div
+                      className="issuer-logo-img editable-issuer-logo empty"
+                      onClick={() => issuerLogoInputRef.current.click()}
+                    />
+                  )}
 
-            {/* ▶️ Paso: Emitido por (imagen) */}
-            <div className="slide">
-              <div
-                className="form-group drop-zone"
-                onDragOver={e => {
-                  e.preventDefault();
-                  e.currentTarget.classList.add('drag-over');
-                }}
-                onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
-                onDrop={e => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                  const file = e.dataTransfer.files[0];
-                  if (file) handleIssuerLogo(e);
-                }}
-              >
-                <label htmlFor="issuerLogo" className="file-label">
                   <input
                     ref={issuerLogoInputRef}
                     type="file"
-                    id="issuerLogo"
                     accept="image/*"
-                    onChange={e => handleIssuerLogo(e)}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      const file = e.target.files[0]
+                      if (file) setIssuerLogoUrl(URL.createObjectURL(file))
+                    }}
                   />
-                  Arrastra o haz clic para subir logo de institución
-                </label>
-                {issuerLogoUrl && (
-                  <>
-                    <img
-                      src={issuerLogoUrl}
-                      alt="Logo de institución"
-                      className="issuer-logo-img"
+                </div>
+
+
+                {/* 3) Firma */}
+                {/* FIRMA */}
+                <div className="detail-item signature-item">
+                  <div className="signature-box">
+                    {signatureFileUrl ? (
+                      <img
+                        src={signatureFileUrl}
+                        alt="Firma cargada"
+                        className="signature-img editable-signature"
+                        onClick={() => signatureFileRef.current.click()}
+                      />
+                    ) : (
+                      <div className="signature-text-upload">
+                        <span
+                          className="signature-name editable-signature-text"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={e => setSignatureText(e.target.innerText)}
+                        >
+                          {signatureText}
+                        </span>
+                        {/* icono de carpeta que abre el file picker */}
+                        <button
+                          type="button"
+                          className="upload-icon"
+                          onClick={() => signatureFileRef.current.click()}
+                          title="Subir imagen de firma"
+                        >
+                          <small className='folder-sign'>📂</small>
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      ref={signatureFileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden-input"
+                      onChange={e => handleFile(e, setSignatureFileUrl)}
                     />
-                    <button
-                      type="button"
-                      className="btn-clear"
-                      onClick={() => setIssuerLogoUrl(null)}
-                    >
-                      🗑️ Borrar logo
-                    </button>
-                  </>
-                )}
+                    <span className="signature-role">Cargo Firmante</span>
+
+                  </div>
+                </div>
+
               </div>
+
+              {/* verificación blockchain */}
+              {/* FOOTER */}
+              <div className="cert-footer">
+                <img src={badge} alt="Blockchain Badge" className="badge-icon" />
+                <span
+                  className="verify-text editable-footer-text"
+                  contentEditable
+                  suppressContentEditableWarning
+                >
+                  Verificar en: gameduk.com/verify/ID_UNICO_BLOCKCHAIN
+                </span>
+              </div>
+
+              {/* botón imprimir */}
+
+
+            </div>
+          </div>
+
+
+          {/* -------- CERTIFICATE BAR (colors & fonts) ---------- */}
+          <div className='certificate-bar'>
+
+            {/* ─── BARRA DE SELECCIÓN DE FUENTE ─────────────────────────────────────── */}
+            <div className="font-picker">
+              <label htmlFor="fontPicker">Fuente:</label>
+              <select id="fontPicker" onChange={e => applyFont(e.target.value)}>
+                <option value="Segoe UI, sans-serif">Segoe UI</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Times New Roman, serif">Times New Roman</option>
+                <option value="Roboto, sans-serif">Roboto</option>
+                <option value="Open Sans, sans-serif">Open Sans</option>
+                <option value="Lora, serif">Lora</option>
+                <option value="Montserrat, sans-serif">Montserrat</option>
+                <option value="Pacifico, cursive">Pacifico</option>
+                <option value="Dancing Script, cursive">Dancing Script</option>
+                <option value="Indie Flower, cursive">Indie Flower</option>
+                <option value="Sue Ellen Francisco, cursive">Sue Ellen Francisco</option>
+              </select>
             </div>
 
-            {/* ▶️ Paso: Nombre Completo */}
-            <div className="slide">
-              <div className="form-group">
-                <label htmlFor="userName">Tu Nombre Completo:</label>
-                <input
-                  type="text"
-                  id="userName"
-                  className="issuer-input"
-                  value={userName}
-                  onChange={e => setUserName(e.target.value)}
-                  ref={userNameRef}
-                />
+
+
+            {/* ─── BARRA DE CONTROL DE FONDO ───────────────────────────────────────────────────────── */}
+            <div className="color-control-bar">
+              {bgColors.map((col, i) => (
+                <div key={i} className="color-stop">
+                  <input
+                    type="color"
+                    value={col}
+                    onChange={e => {
+                      const newCols = [...bgColors];
+                      newCols[i] = e.target.value;
+                      setBgColors(newCols);
+                    }}
+                  />
+                  {bgColors.length > 1 && (
+                    <button
+                      type="button"
+                      className="remove-color-stop"
+                      onClick={() => removeColorStop(i)}
+                    >−</button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                className="add-color-stop"
+                onClick={() => setBgColors([...bgColors, '#ffffff'])}
+              >＋</button>
+
+            </div>
+
+          </div>
+
+
+          {/* ─── ASIDE FORM ───────────────────────────────────────────────────────── */}
+
+          <aside className="form-section form-slider">
+            <button
+              className="slider-arrow left"
+              onClick={() => setCurrentStep(s => Math.max(s - 1, 0))}
+            >‹</button>
+
+            <div
+              className="slides"
+              // desplazamiento = paso × (100 / númeroDePasos)%
+              style={{
+                transform: `translateX(-${currentStep * (100 / steps.length)}%)`
+              }}
+              onKeyDown={e => { if (e.key === 'Enter') setCurrentStep(s => Math.min(s + 1, steps.length - 1)); }}
+              tabIndex={0}
+            >
+              {/* ▶️ Paso: Subir Logo (logo input) */}
+              <div className="slide">
+                <div
+                  className="form-group drop-zone"
+                  onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+                  onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
+                  onDrop={e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file) setLogoUrl(URL.createObjectURL(file));
+                  }}
+                >
+                  <label htmlFor="logo" className="file-label">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      id="logo"
+                      accept="image/*"
+                      onChange={handleLogo}
+                      style={{ display: 'none' }}
+                    />
+                    Arrastra o haz clic para subir tu logo
+                  </label>
+                  {logoUrl && (
+                    <>
+                      <img src={logoUrl} alt="Logo cargado" className="cert-logo" />
+                      <button type="button" className="btn-clear" onClick={() => setLogoUrl(null)}>
+                        🗑️ Borrar logo
+                      </button>
+                    </>
+                  )}
+                </div>
+
+              </div>
+              {/* ▶️ Paso: Emitido por (texto) */}
+              <div className="slide">
+
+                <div className="form-group">
+                  <label htmlFor="issuerText">Emitido por (texto):</label>
+                  <input
+                    type="text"
+                    id="issuerText"
+                    className="issuer-input"
+                    value={issuer}
+                    onChange={e => setIssuer(e.target.value)}
+                    ref={issuerInputRef}
+                  />
+                  <button
+                    type="button"
+                    className="btn-edit"
+                    onClick={() => issuerInputRef.current.focus()}
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-clear"
+                    onClick={clear(setIssuer)}
+                  >
+                    🗑️ Borrar
+                  </button>
+
+                </div>
+
+              </div>
+
+              {/* ▶️ Paso: Emitido por (imagen) */}
+              <div className="slide">
+                <div
+                  className="form-group drop-zone"
+                  onDragOver={e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('drag-over');
+                  }}
+                  onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
+                  onDrop={e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleIssuerLogo(e);
+                  }}
+                >
+                  <label htmlFor="issuerLogo" className="file-label">
+                    <input
+                      ref={issuerLogoInputRef}
+                      type="file"
+                      id="issuerLogo"
+                      accept="image/*"
+                      onChange={e => handleIssuerLogo(e)}
+                      style={{ display: 'none' }}
+                    />
+                    Arrastra o haz clic para subir logo de institución
+                  </label>
+                  {issuerLogoUrl && (
+                    <>
+                      <img
+                        src={issuerLogoUrl}
+                        alt="Logo de institución"
+                        className="issuer-logo-img"
+                      />
+                      <button
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => setIssuerLogoUrl(null)}
+                      >
+                        🗑️ Borrar logo
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* ▶️ Paso: Nombre Completo */}
+              <div className="slide">
+                <div className="form-group">
+                  <label htmlFor="userName">Tu Nombre Completo:</label>
+                  <input
+                    type="text"
+                    id="userName"
+                    className="issuer-input"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    ref={userNameRef}
+                  />
+                  <button
+                    type="button"
+                    className="btn-edit"
+                    onClick={() => userNameRef.current.focus()}
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-clear"
+                    onClick={clear(setUserName)}
+                  >
+                    🗑️ Borrar
+                  </button>
+                </div>
+              </div>
+
+              {/* ▶️ Paso: Fecha Emisión */}
+              <div className="slide">
+                <div className="form-group">
+                  <label htmlFor="issueDate">Fecha de emisión:</label>
+                  <input
+                    ref={issueDateRef}
+                    type="date"
+                    id="issueDate"
+                    value={issueDate}
+                    onChange={e => setIssueDate(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn-clear"
+                    onClick={clear(setIssueDate)}
+                  >
+                    🗑️ Borrar
+                  </button>
+                </div>
+              </div>
+
+
+              {/* ▶️ Paso 6: Firma (imagen, texto o boceto) */}
+              <div className="slide">
+                <div className="accordion">
+
+                  <div className={`accordion-item ${signatureMethod === 'image' ? 'active' : ''}`}>
+                    <div
+                      className="accordion-header"
+                      onClick={() => setSignatureMethod(signatureMethod === 'image' ? '' : 'image')}
+                    >
+                      🖼️ Subir imagen de firma
+                    </div>
+                    {signatureMethod === 'image' && (
+                      <div className="accordion-content">
+                        <div
+                          className="form-group drop-zone"
+                          onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+                          onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
+                          onDrop={e => {
+                            e.preventDefault();
+                            e.currentTarget.classList.remove('drag-over');
+                            handleFile(e, setSignatureFileUrl);
+                          }}
+                        >
+                          <label htmlFor="signatureFile" className="file-label">
+                            <input
+                              ref={signatureFileRef}
+                              type="file"
+                              id="signatureFile"
+                              accept="image/*"
+                              onChange={e => handleFile(e, setSignatureFileUrl)}
+                              style={{ display: 'none' }}
+                            />
+                            Arrastra o haz clic para subir tu firma
+                          </label>
+                          {signatureFileUrl && (
+                            <>
+                              <img src={signatureFileUrl} alt="Firma cargada" className="signature-img" />
+                              <button type="button" className="btn-clear" onClick={() => setSignatureFileUrl(null)}>
+                                🗑️ Borrar firma
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={`accordion-item ${signatureMethod === 'text' ? 'active' : ''}`}>
+                    <div
+                      className="accordion-header"
+                      onClick={() => setSignatureMethod(signatureMethod === 'text' ? '' : 'text')}
+                    >
+                      📝 Escribir firma como texto
+                    </div>
+                    {signatureMethod === 'text' && (
+                      <div className="accordion-content">
+                        <div className="form-group">
+                          <label htmlFor="signatureText">O escribe tu firma:</label>
+                          <input
+                            ref={signatureTextRef}
+                            id="signatureText"
+                            type="text"
+                            className="issuer-input"
+                            value={signatureText}
+                            onChange={e => setSignatureText(e.target.value)}
+                          />
+                          <button type="button" className="btn-clear" onClick={clear(setSignatureText)}>
+                            🗑️ Borrar
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+
+                  {/* --- BLOQUE DRAW --- */}
+                  {/* ▶️ Paso Boceto de firma */}
+                  <div className={`accordion-item ${signatureMethod === 'draw' ? 'active' : ''}`}>
+                    <div
+                      className="accordion-header"
+                      onClick={() => setSignatureMethod(signatureMethod === 'draw' ? '' : 'draw')}
+                    >
+                      ✍️ Boceto de firma
+                    </div>
+                    {signatureMethod === 'draw' && (
+                      <div className="accordion-content">
+                        <div className="form-group">
+                          {/* botón que abre el modal */}
+                          <button
+                            type="button"
+                            className="btn-edit"
+                            onClick={() => setShowSignatureModal(true)}
+                          >
+                            Bocetar firma
+                          </button>
+
+                          {/* botón inline para borrar firma existente */}
+                          {signatureFileUrl && (
+                            <button
+                              type="button"
+                              className="btn-clear"
+                              onClick={() => {
+                                setSignatureFileUrl(null);
+                                clearCanvas();
+                              }}
+                            >
+                              🗑️ Borrar firma
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+
+                </div>
+              </div>
+
+            </div>
+
+            <button
+              className="slider-arrow right"
+              onClick={() => setCurrentStep(s => Math.min(s + 1, steps.length - 1))}
+            >›</button>
+          </aside>
+
+          {/* botón Generar Certificado */}
+          <div className="generate-btn-container">
+            <button
+              type="button"
+              className="btn-generate"
+              onClick={togglePreview}
+            >
+              Generar Certificado
+            </button>
+          </div>
+
+        </section >
+
+        {showSignatureModal && (
+          <div className="signature-modal-overlay">
+            <div className="signature-modal">
+              <canvas
+                ref={signatureCanvasRef}
+                width={600}
+                height={200}
+                className="signature-canvas"
+              />
+              <div className="signature-tools">
+                <label>
+                  Color: <input
+                    type="color"
+                    value={brushColor}
+                    onChange={e => setBrushColor(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Grosor: <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={brushSize}
+                    onChange={e => setBrushSize(+e.target.value)}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="btn-clear"
+                  onClick={clearCanvas}
+                >
+                  🗑️ Borrar boceto
+                </button>
                 <button
                   type="button"
                   className="btn-edit"
-                  onClick={() => userNameRef.current.focus()}
+                  onClick={() => {
+                    // guardar firma y cerrar modal
+                    const dataUrl = signatureCanvasRef.current.toDataURL('image/png');
+                    setSignatureFileUrl(dataUrl);
+                    setShowSignatureModal(false);
+                    clearCanvas();
+                  }}
                 >
-                  ✏️ Editar
+                  ✔️ Aceptar
                 </button>
                 <button
                   type="button"
                   className="btn-clear"
-                  onClick={clear(setUserName)}
+                  onClick={() => {
+                    // descartar y cerrar
+                    clearCanvas();
+                    setShowSignatureModal(false);
+                  }}
                 >
-                  🗑️ Borrar
+                  ❌ Cancelar
                 </button>
               </div>
             </div>
-
-            {/* ▶️ Paso: Fecha Emisión */}
-            <div className="slide">
-              <div className="form-group">
-                <label htmlFor="issueDate">Fecha de emisión:</label>
-                <input
-                  ref={issueDateRef}
-                  type="date"
-                  id="issueDate"
-                  value={issueDate}
-                  onChange={e => setIssueDate(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="btn-clear"
-                  onClick={clear(setIssueDate)}
-                >
-                  🗑️ Borrar
-                </button>
-              </div>
-            </div>
-
-
-            {/* ▶️ Paso 6: Firma (imagen, texto o boceto) */}
-            <div className="slide">
-              <div className="accordion">
-
-                <div className={`accordion-item ${signatureMethod === 'image' ? 'active' : ''}`}>
-                  <div
-                    className="accordion-header"
-                    onClick={() => setSignatureMethod(signatureMethod === 'image' ? '' : 'image')}
-                  >
-                    🖼️ Subir imagen de firma
-                  </div>
-                  {signatureMethod === 'image' && (
-                    <div className="accordion-content">
-                      <div
-                        className="form-group drop-zone"
-                        onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
-                        onDragLeave={e => e.currentTarget.classList.remove('drag-over')}
-                        onDrop={e => {
-                          e.preventDefault();
-                          e.currentTarget.classList.remove('drag-over');
-                          handleFile(e, setSignatureFileUrl);
-                        }}
-                      >
-                        <label htmlFor="signatureFile" className="file-label">
-                          <input
-                            ref={signatureFileRef}
-                            type="file"
-                            id="signatureFile"
-                            accept="image/*"
-                            onChange={e => handleFile(e, setSignatureFileUrl)}
-                            style={{ display: 'none' }}
-                          />
-                          Arrastra o haz clic para subir tu firma
-                        </label>
-                        {signatureFileUrl && (
-                          <>
-                            <img src={signatureFileUrl} alt="Firma cargada" className="signature-img" />
-                            <button type="button" className="btn-clear" onClick={() => setSignatureFileUrl(null)}>
-                              🗑️ Borrar firma
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className={`accordion-item ${signatureMethod === 'text' ? 'active' : ''}`}>
-                  <div
-                    className="accordion-header"
-                    onClick={() => setSignatureMethod(signatureMethod === 'text' ? '' : 'text')}
-                  >
-                    📝 Escribir firma como texto
-                  </div>
-                  {signatureMethod === 'text' && (
-                    <div className="accordion-content">
-                      <div className="form-group">
-                        <label htmlFor="signatureText">O escribe tu firma:</label>
-                        <input
-                          ref={signatureTextRef}
-                          id="signatureText"
-                          type="text"
-                          className="issuer-input"
-                          value={signatureText}
-                          onChange={e => setSignatureText(e.target.value)}
-                        />
-                        <button type="button" className="btn-clear" onClick={clear(setSignatureText)}>
-                          🗑️ Borrar
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-
-                {/* --- BLOQUE DRAW --- */}
-                {/* ▶️ Paso Boceto de firma */}
-                <div className={`accordion-item ${signatureMethod === 'draw' ? 'active' : ''}`}>
-                  <div
-                    className="accordion-header"
-                    onClick={() => setSignatureMethod(signatureMethod === 'draw' ? '' : 'draw')}
-                  >
-                    ✍️ Boceto de firma
-                  </div>
-                  {signatureMethod === 'draw' && (
-                    <div className="accordion-content">
-                      <div className="form-group">
-                        {/* botón que abre el modal */}
-                        <button
-                          type="button"
-                          className="btn-edit"
-                          onClick={() => setShowSignatureModal(true)}
-                        >
-                          Bocetar firma
-                        </button>
-
-                        {/* botón inline para borrar firma existente */}
-                        {signatureFileUrl && (
-                          <button
-                            type="button"
-                            className="btn-clear"
-                            onClick={() => {
-                              setSignatureFileUrl(null);
-                              clearCanvas();
-                            }}
-                          >
-                            🗑️ Borrar firma
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-
-              </div>
-            </div>
-
           </div>
+        )}
 
-          <button
-            className="slider-arrow right"
-            onClick={() => setCurrentStep(s => Math.min(s + 1, steps.length - 1))}
-          >›</button>
-        </aside>
-
-        {/* botón Generar Certificado */}
-        <div className="generate-btn-container">
-          <button
-            type="button"
-            className="btn-generate"
-            onClick={togglePreview}
-          >
-            Generar Certificado
-          </button>
-        </div>
-
-      </section >
-
-      {showSignatureModal && (
-        <div className="signature-modal-overlay">
-          <div className="signature-modal">
-            <canvas
-              ref={signatureCanvasRef}
-              width={600}
-              height={200}
-              className="signature-canvas"
-            />
-            <div className="signature-tools">
-              <label>
-                Color: <input
-                  type="color"
-                  value={brushColor}
-                  onChange={e => setBrushColor(e.target.value)}
+        {showPreview && (
+          <div className="preview-modal-overlay" onClick={togglePreview}>
+            <div className="preview-modal" onClick={e => e.stopPropagation()}>
+              <button className="close-modal" onClick={togglePreview}>×</button>
+              {/* clona o referencia el certificado */}
+              <div className="preview-content">
+                {/* puedes clonar con innerHTML o renderizar el mismo JSX */}
+                <div
+                  className="certificate"
+                  contentEditable={false}
+                  dangerouslySetInnerHTML={{ __html: getSanitizedHTML() }}
+                  style={{
+                    backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
+                    border: `5px solid ${borderColor}`,
+                    fontFamily: fontFamily,
+                  }}
                 />
-              </label>
-              <label>
-                Grosor: <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={brushSize}
-                  onChange={e => setBrushSize(+e.target.value)}
-                />
-              </label>
-              <button
-                type="button"
-                className="btn-clear"
-                onClick={clearCanvas}
-              >
-                🗑️ Borrar boceto
-              </button>
-              <button
-                type="button"
-                className="btn-edit"
-                onClick={() => {
-                  // guardar firma y cerrar modal
-                  const dataUrl = signatureCanvasRef.current.toDataURL('image/png');
-                  setSignatureFileUrl(dataUrl);
-                  setShowSignatureModal(false);
-                  clearCanvas();
-                }}
-              >
-                ✔️ Aceptar
-              </button>
-              <button
-                type="button"
-                className="btn-clear"
-                onClick={() => {
-                  // descartar y cerrar
-                  clearCanvas();
-                  setShowSignatureModal(false);
-                }}
-              >
-                ❌ Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </div>
 
-      {showPreview && (
-        <div className="preview-modal-overlay" onClick={togglePreview}>
-          <div className="preview-modal" onClick={e => e.stopPropagation()}>
-            <button className="close-modal" onClick={togglePreview}>×</button>
-            {/* clona o referencia el certificado */}
-            <div className="preview-content">
-              {/* puedes clonar con innerHTML o renderizar el mismo JSX */}
-              <div
-                className="certificate"
-                contentEditable={false}
-                dangerouslySetInnerHTML={{ __html: getSanitizedHTML() }}
-                style={{
-                  backgroundImage: `linear-gradient(to right, ${bgColors.join(',')})`,
-                  border: `5px solid ${borderColor}`,
-                  fontFamily: fontFamily,
-                }}
-              />
-            </div>
-
-            {/* botón imprimir */}
-            <button
-              type="button"
-              className="print-btn"
-              onClick={handlePrint}
-            >
-              {/* <button
+              {/* botón imprimir */}
+              <button
+                type="button"
+                className="print-btn"
+                onClick={handlePrint}
+              >
+                {/* <button
             onClick={() => window.print()}
             className="print-btn no-capture"
           > */}
-              {/* Descargar/Imprimir */}
-              Imprimir
-            </button>
+                {/* Descargar/Imprimir */}
+                Imprimir
+              </button>
 
-            {/* Botón Descargar */}
-            <button
-              type="button"
-              className="print-btn"
-              onClick={handleGeneratePDF}
-            >
-              Descargar PDF
-            </button>
+              {/* Botón Descargar */}
+              <button
+                type="button"
+                className="print-btn"
+                onClick={handleGeneratePDF}
+              >
+                Descargar PDF
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-
-    </div >
-  )
+      </div >
+    </>
+  );
 }
 
 

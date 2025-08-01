@@ -1674,9 +1674,6 @@ h1.cert-header.editable-text.move-down {
 
 
 
-
-
-
 /* DESCARGAR PDF */
 .pdf-print-buttons {
   display: flex;
@@ -1691,4 +1688,60 @@ h1.cert-header.editable-text.move-down {
 
 .pdf-print-buttons .print-btn:hover {
   background: #e65100;
+}
+
+
+
+/* --------- WELCOME-MODAL ------------ */
+
+/* Overlay semi-transparente */
+.welcome-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Caja del modal */
+.welcome-modal {
+  position: relative;
+  background: #2f2558; /* puedes ajustar al degradado o color que uses */
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 90%;
+  width: 360px;
+  text-align: center;
+}
+
+/* Texto principal */
+.welcome-text {
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* Botón "Aceptar" */
+.welcome-accept-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: #227dba;         /* azul eléctrico */
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Hover más claro */
+.welcome-accept-btn:hover {
+  background: #143554;
+  box-shadow: 0 0 5px 1px #67d8f2;
 }
