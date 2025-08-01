@@ -74,6 +74,7 @@ export default function CertificateForm() {
   // ─── Estado para el slide del formulario ────────────────────────────
   const [currentStep, setCurrentStep] = useState(0);
   const steps = [
+    'watermark',      // Marca de Agua
     'logo',           // Subir Logo
     'issuerText',     // Emitido por (texto)
     'issuerLogo',     // Emitido por (imagen)

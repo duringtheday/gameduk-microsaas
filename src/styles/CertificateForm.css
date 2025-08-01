@@ -1143,14 +1143,19 @@ h1.cert-header.editable-text.move-down {
 
 .form-slider .slides {
   display: flex;
-  width: calc(100% * 6);
+  width: calc(100% * 7) !important;
   min-height: 15vh;
   transition: transform .3s ease-in-out;
 }
 
 .form-slider .slide {
-  flex: 0 0 16.6667%;
   /* cada slide = 1/6 = 16.66% del ancho */
+  /* flex: 0 0 16.6667%;  */
+  /* cada slide = 1/7 = 14.2857% del ancho */
+  /* flex: 0 0 calc(1 / 7);  */
+  /* flex: 0 0 13.92% !important;  */
+  flex: 0 0 14.2857% !important; 
+  /* flex: 0 0 auto;  */
   display: flex;
   padding: 0.5rem;
   box-sizing: border-box;
